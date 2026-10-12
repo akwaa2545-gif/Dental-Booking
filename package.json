@@ -1,0 +1,60 @@
+{
+  "name": "dental-booking-demo",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "engines": {
+    "node": ">=24.15.0"
+  },
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "preview": "vite preview --host 127.0.0.1",
+    "test": "npm run test:unit",
+    "test:unit": "vitest run",
+    "test:worker": "vitest run tests/worker",
+    "test:db": "node scripts/test-db.mjs",
+    "test:e2e": "playwright test",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "build": "vite build",
+    "prepare:db": "node scripts/assemble-task3.mjs",
+    "build:runtime": "node scripts/build-runtime.mjs",
+    "check:runtime": "node scripts/check-runtime.mjs",
+    "check:line-runtime": "node scripts/check-line-runtime.mjs",
+    "check:notification-runtime": "node scripts/check-notification-runtime.mjs",
+    "check:notification-integration": "node scripts/check-notification-integration.mjs",
+    "check:bot-info-runtime": "node scripts/check-bot-info-runtime.mjs",
+    "check:manual-approval-runtime": "node scripts/check-manual-approval-runtime.mjs"
+  },
+  "dependencies": {
+    "@line/liff": "2.31.1",
+    "pg": "8.23.1",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
+    "@eslint/js": "10.0.1",
+    "@playwright/test": "1.63.0",
+    "@testing-library/dom": "10.4.2",
+    "@testing-library/jest-dom": "7.0.1",
+    "@testing-library/react": "16.3.3",
+    "@testing-library/user-event": "14.6.7",
+    "@types/node": "24.10.1",
+    "@types/pg": "8.20.0",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.1.2",
+    "axe-core": "4.13.0",
+    "eslint": "10.12.0",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "eslint-plugin-react-refresh": "0.5.7",
+    "jsdom": "30.1.2",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.71.1",
+    "vite": "8.3.3",
+    "vitest": "5.0.3",
+    "wrangler": "4.148.0"
+  }
+}

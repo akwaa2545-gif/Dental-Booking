@@ -1,0 +1,13 @@
+{
+  // Demo asset config only. Future staging/production must be separately reviewed.
+  // Non-secret template keys: APP_MODE=production, AUTH_MODE=line, MESSAGING_MODE=line.
+  // Set environment-specific APP_ORIGIN and provider IDs only after approval.
+  // Keep notifications and cron OFF; never add secrets or deployable placeholder bindings.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "dental-booking-demo",
+  "compatibility_date": "2026-10-07",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  }
+}

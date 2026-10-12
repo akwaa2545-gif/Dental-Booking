@@ -1,0 +1,16 @@
+{
+  "kind": "Synthetic golden payloads produced by pure functions extracted from verified deployed bundle",
+  "bundleSha256": "a6288ec184bb5fa1e599b9a2652d90c366d08643db1fb58aaf5787530a1b1ebb",
+  "functionSha256": {
+    "isISODate": "b4f04dbb755032af3d84618a1e3862a8736dcc8c464ecc15ed62d3921e3cf0ac",
+    "cardDate": "a3c541490a921356833649db80a6c24bb7806832e2545d4455ee44c518c1bc93",
+    "identityCard": "b96d2a851707780e0b1dbeb1b4e39bf7960d9a7fedcbf3c024c0dadf35705481",
+    "notificationPayloadV1": "51badb2d49a99728eaa2d9174550821cf349b2b8285717d2bc3071f366000b96",
+    "notificationPayloadV2": "45cfa8a6a1d4f8dee0fe47fc2ae024dc5df11d2332e8da64f3521b05ca6b5a65",
+    "notificationPayloadV3": "83b56292743b89f73bf600f11e9625d464d2684e8d31d381e5260c74a262377b",
+    "notificationPayload": "18c52674a2649f75add06719061cbdf1dad324eeb09915030d731d1d4bc7132f",
+    "adminBookingPayloadV1": "852390f33231ef1b38421dc3adfc3bf63956fbe9fe685075d8b06cef16178e74",
+    "adminBookingPayload": "13fd8a96f0e9a10930ac2ae92b98e67acd7badb980a716f244628b90544e8a4c"
+  },
+  "personalData": "Fictitious names and phone only; no provider sends or database calls"
+}

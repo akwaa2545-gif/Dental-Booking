@@ -1,0 +1,37 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "tooth-talk-staging",
+  "main": "src/worker/entry.ts",
+  "compatibility_date": "2026-10-07",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "workers_dev": true,
+  "preview_urls": false,
+  "minify": true,
+  "upload_source_maps": false,
+  "send_metrics": false,
+  "logpush": false,
+  "observability": {
+    "enabled": false,
+    "logs": {
+      "enabled": false,
+      "invocation_logs": false,
+      "persist": false
+    },
+    "traces": {
+      "enabled": false,
+      "persist": false
+    }
+  },
+  "vars": {
+    "APP_MODE": "production",
+    "APP_STAGE": "synthetic-staging",
+    "APP_ORIGIN": "https://tooth-talk-staging.tooth-talk-staging-f7ff4a96.workers.dev",
+    "AUTH_MODE": "line",
+    "MESSAGING_MODE": "disabled",
+    "LINE_CHANNEL_ID": "1234567890",
+    "LINE_LIFF_ID": "1234567890-Example",
+    "LINE_PROVIDER_ID": "1234567891"
+  }
+}

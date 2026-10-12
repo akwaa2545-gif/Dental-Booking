@@ -1,0 +1,19 @@
+.worktrees/
+.superpowers/
+node_modules/
+dist/
+test-results/
+playwright-report/
+.env
+.env.*
+!.env.example
+.wrangler/
+artifacts/
+src/worker/generated-assets.ts
+
+# Local secrets and generated verification output
+node_modules
+.dev.vars
+.dev.vars.*
+wrangler.local.*
+coverage/

@@ -1,0 +1,20 @@
+import assert from 'node:assert/strict';
+import {mkdir,mkdtemp,writeFile,rm} from 'node:fs/promises';
+import {dirname,join,resolve} from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {build} from 'esbuild';
+import {Miniflare,Log,LogLevel,convertV4MiniflareOptions} from 'miniflare';
+// 013 revokes both restricted RPCs. Final composition must never call them,
+// including complete old settings or conflicts with the combined gate.
+// Legacy sender/transport behavior remains covered in the module test suites.
+const root=resolve(dirname(fileURLToPath(import.meta.url)),'..'),reportPath=join(root,'artifacts/restricted-notification-runtime-check.json');await mkdir(join(root,'artifacts'),{recursive:true});await rm(reportPath,{force:true});const temp=await mkdtemp(join(root,'artifacts/restricted-notification-runtime-'));
+const settings={APP_MODE:'production',APP_STAGE:'synthetic-staging',AUTH_MODE:'line',MESSAGING_MODE:'disabled',APP_ORIGIN:'https://tooth-talk-staging.tooth-talk-staging-f7ff4a96.workers.dev',LINE_CHANNEL_ID:'123456',LINE_PROVIDER_ID:'synthetic',DENTAL_DB:{connectionString:'synthetic-only'},NOTIFICATION_TEST_ENABLED:'true',NOTIFICATION_TEST_EVENT_ID:'11111111-1111-4111-8111-111111111111',NOTIFICATION_TEST_OWNER_ID:'22222222-2222-4222-8222-222222222222',NOTIFICATION_TEST_FREE_MESSAGE_LIMIT:'300',LINE_MESSAGING_ACCESS_TOKEN:'synthetic-invalid-for-provider',LINE_MESSAGING_BASIC_ID:'@clinic',LINE_MESSAGING_DESTINATION:'U'+'b'.repeat(32)};
+await writeFile(join(temp,'entry.ts'),`import {createRuntime} from ${JSON.stringify(join(root,'src/worker/runtime.ts'))};export default {async fetch(request){let constructed=0;const input=await request.json(),runtime=createRuntime({assets:{},clientFactory:()=>{constructed++;throw Error('Legacy configurations must not construct a client');}});await runtime.scheduled({}, {...${JSON.stringify(settings)},...input});return Response.json({constructed});}};`);
+let worker,outbound=0,checks=0;
+try{
+ await build({entryPoints:[join(temp,'entry.ts')],outfile:join(temp,'entry.js'),bundle:true,format:'esm',platform:'browser',external:['node:*'],target:'es2022',logLevel:'silent',plugins:[{name:'deny-live-pg',setup(b){b.onResolve({filter:/^pg$/},()=>({path:'pg',namespace:'deny-live-pg'}));b.onLoad({filter:/.*/,namespace:'deny-live-pg'},()=>({contents:'export class Client { constructor(){ throw new Error("Live DB forbidden"); } }',loader:'js'}));}}]});
+ const opts=convertV4MiniflareOptions({name:'synthetic-disabled-restricted-runtime',modules:true,scriptPath:join(temp,'entry.js'),compatibilityDate:'2026-10-07',compatibilityFlags:['nodejs_compat'],cf:false,log:new Log(LogLevel.ERROR),outboundService:async()=>{outbound++;throw Error('Legacy provider requests forbidden');}});worker=new Miniflare({...opts,telemetry:{enabled:false}});await worker.ready;
+ const conflicts=[{}, {APP_STAGE:'production'},{MESSAGING_MODE:'line'},{NOTIFICATION_DISPATCH_ENABLED:'true'},{ADMIN_BOOKING_NOTIFICATIONS_ENABLED:'true'},{LINE_MANUAL_APPROVAL_ENABLED:'true'},{NOTIFICATION_TEST_EVENT_ID:null},{NOTIFICATION_TEST_OWNER_ID:null},{NOTIFICATION_TEST_FREE_MESSAGE_LIMIT:null},{LINE_MESSAGING_ACCESS_TOKEN:null},{LINE_PROVIDER_ID:null},{APP_ORIGIN:'https://other.example'}];
+ for(const combined of [null,'false','true'])for(const change of conflicts){const response=await worker.dispatchFetch('https://synthetic.invalid/check',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({COMBINED_NOTIFICATIONS_ENABLED:combined,...change})});assert.equal(response.status,200);assert.deepEqual(await response.json(),{constructed:0});assert.equal(outbound,0);checks++;}
+ const report={passed:true,checks,runtime:'actual local workerd',realProviderRequests:0,realDatabaseConnections:0,realCredentialsUsed:false,scope:'unsupported restricted configurations fail closed before DB with combined absent/false/true; no test-only sender fallback',claims:0,sends:0};await writeFile(reportPath,JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report));
+}finally{if(worker)await worker.dispose();await rm(temp,{recursive:true,force:true});}
